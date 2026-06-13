@@ -4,7 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,11 +22,16 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+   @NotBlank(message = "Title is required")
+   @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
+   private String title;
 
-    private String description;
+   @NotBlank(message = "Description is required")
+   private String description;
 
-    private String status;
+   @NotBlank(message = "Status is required")
+   private String status;
 
-    private String createdAt;
+   @NotBlank(message = "Created date is required")
+   private String createdAt;
 }

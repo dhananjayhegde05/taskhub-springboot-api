@@ -1,7 +1,12 @@
 package com.dhananjay.taskhub.controller;
 
+import com.dhananjay.taskhub.dto.TaskRequestDTO;
+import com.dhananjay.taskhub.dto.TaskResponseDTO;
 import com.dhananjay.taskhub.entity.Task;
 import com.dhananjay.taskhub.service.TaskService;
+import com.dhananjay.taskhub.dto.TaskRequestDTO;
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +23,17 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskService.createTask(task);
+    public TaskResponseDTO createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+      return taskService.createTask(taskRequestDTO);
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
+    public List<TaskResponseDTO> getAllTasks() {
       return taskService.getAllTasks();
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public TaskResponseDTO getTaskById(@PathVariable Long id){
       return taskService.getTaskById(id);
     }
 
