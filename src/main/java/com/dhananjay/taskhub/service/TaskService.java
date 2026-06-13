@@ -4,7 +4,7 @@ import com.dhananjay.taskhub.entity.Task;
 import com.dhananjay.taskhub.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class TaskService {
@@ -24,4 +24,25 @@ public class TaskService {
     public Task getTaskById(Long id) {
       return taskRepository.findById(id).orElse(null);
     }
+
+    public Task updateTask(Long id, Task updatedTask) {
+
+      Task existingTask = taskRepository.findById(id)
+              .orElse(null);
+  
+      if (existingTask == null) {
+          return null;
+      }
+  
+      existingTask.setTitle(updatedTask.getTitle());
+      existingTask.setDescription(updatedTask.getDescription());
+      existingTask.setStatus(updatedTask.getStatus());
+      existingTask.setCreatedAt(updatedTask.getCreatedAt());
+  
+      return taskRepository.save(existingTask);
+      }
+
+      public void deleteTask(Long id) {
+        taskRepository.deleteById(id);
+      }
 }
