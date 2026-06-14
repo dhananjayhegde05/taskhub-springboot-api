@@ -21,25 +21,13 @@ public class TaskService {
 
     public TaskResponseDTO createTask(TaskRequestDTO taskRequestDTO) {
 
-      Task task = new Task();
-  
-      task.setTitle(taskRequestDTO.getTitle());
-      task.setDescription(taskRequestDTO.getDescription());
-      task.setStatus(taskRequestDTO.getStatus());
-      task.setCreatedAt(taskRequestDTO.getCreatedAt());
+      Task task = convertToEntity(taskRequestDTO);
   
       Task savedTask = taskRepository.save(task);
   
-      TaskResponseDTO responseDTO = new TaskResponseDTO();
-  
-      responseDTO.setId(savedTask.getId());
-      responseDTO.setTitle(savedTask.getTitle());
-      responseDTO.setDescription(savedTask.getDescription());
-      responseDTO.setStatus(savedTask.getStatus());
-      responseDTO.setCreatedAt(savedTask.getCreatedAt());
-  
-      return responseDTO;
+      return convertToResponseDTO(savedTask);
     }
+
     public List<TaskResponseDTO> getAllTasks() {
       return taskRepository.findAll()
       .stream()
@@ -57,29 +45,33 @@ public class TaskService {
       return convertToResponseDTO(task);
       }
 
-      public TaskResponseDTO updateTask(Long id,
-        TaskRequestDTO updatedTask) {
+      public TaskResponseDTO updateTask(Long id, TaskRequestDTO updatedTask) {
 
-      Task existingTask = taskRepository.findById(id)
-      .orElse(null);
-
-      if (existingTask == null) {
-      return null;
-      }
-
-      existingTask.setTitle(updatedTask.getTitle());
-      existingTask.setDescription(updatedTask.getDescription());
-      existingTask.setStatus(updatedTask.getStatus());
-      existingTask.setCreatedAt(updatedTask.getCreatedAt());
-
-      Task savedTask = taskRepository.save(existingTask);
-
-      return convertToResponseDTO(savedTask);
+        Task existingTask = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(
+                                "Task with id " + id + " not found"));
+    
+        existingTask.setTitle(updatedTask.getTitle());
+        existingTask.setDescription(updatedTask.getDescription());
+        existingTask.setStatus(updatedTask.getStatus());
+        existingTask.setCreatedAt(updatedTask.getCreatedAt());
+    
+        Task savedTask = taskRepository.save(existingTask);
+    
+        return convertToResponseDTO(savedTask);
       }
 
       public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(
+                                "Task with id " + id + " not found"));
+    
+        taskRepository.delete(task);
       }
+
       private TaskResponseDTO convertToResponseDTO(Task task) {
 
         TaskResponseDTO responseDTO = new TaskResponseDTO();
@@ -91,6 +83,18 @@ public class TaskService {
         responseDTO.setCreatedAt(task.getCreatedAt());
     
         return responseDTO;
+      }
+
+      private Task convertToEntity(TaskRequestDTO dto) {
+
+        Task task = new Task();
+    
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(dto.getStatus());
+        task.setCreatedAt(dto.getCreatedAt());
+    
+        return task;
       }
       
 }
