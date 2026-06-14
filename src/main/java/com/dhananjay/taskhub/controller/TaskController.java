@@ -5,6 +5,7 @@ import com.dhananjay.taskhub.dto.TaskResponseDTO;
 import com.dhananjay.taskhub.entity.Task;
 import com.dhananjay.taskhub.service.TaskService;
 import com.dhananjay.taskhub.dto.TaskRequestDTO;
+import com.dhananjay.taskhub.dto.ApiResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +24,28 @@ public class TaskController {
     }
 
     @PostMapping
-    public TaskResponseDTO createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
-      return taskService.createTask(taskRequestDTO);
+    public ApiResponse<TaskResponseDTO> createTask(
+        @Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+
+    TaskResponseDTO responseDTO = taskService.createTask(taskRequestDTO);
+
+    return new ApiResponse<>(
+            true,
+            "Task created successfully",
+            responseDTO
+    );
     }
 
     @GetMapping
-    public List<TaskResponseDTO> getAllTasks() {
-      return taskService.getAllTasks();
+    public ApiResponse<List<TaskResponseDTO>> getAllTasks() {
+
+    List<TaskResponseDTO> tasks = taskService.getAllTasks();
+
+    return new ApiResponse<>(
+            true,
+            "Tasks fetched successfully",
+            tasks
+    );
     }
 
     @GetMapping("/{id}")
@@ -38,17 +54,29 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id,
-                           @RequestBody Task task) {
+    public ApiResponse<TaskResponseDTO> updateTask(
+        @PathVariable Long id,
+        @Valid @RequestBody TaskRequestDTO taskRequestDTO) {
 
-      return taskService.updateTask(id, task);
+    TaskResponseDTO responseDTO =
+            taskService.updateTask(id, taskRequestDTO);
+
+    return new ApiResponse<>(
+            true,
+            "Task updated successfully",
+            responseDTO
+    );
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTask(@PathVariable Long id) {
+    public ApiResponse<String> deleteTask(@PathVariable Long id) {
 
     taskService.deleteTask(id);
 
-      return "Task deleted successfully";
-    }
+    return new ApiResponse<>(
+            true,
+            "Task deleted successfully",
+            null
+    );
+}
 }

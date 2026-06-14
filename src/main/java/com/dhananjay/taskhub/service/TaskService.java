@@ -47,30 +47,33 @@ public class TaskService {
     }
     public TaskResponseDTO getTaskById(Long id) {
 
-      Task task = taskRepository.findById(id).orElse(null);
-  
-      if (task == null) {
-          return null;
-      }
-  
-      return convertToResponseDTO(task);
-  }
+    Task task = taskRepository.findById(id)
+            .orElse(null);
 
-    public Task updateTask(Long id, Task updatedTask) {
+    if (task == null) {
+        return null;
+    }
+
+    return convertToResponseDTO(task);
+    }
+      public TaskResponseDTO updateTask(Long id,
+        TaskRequestDTO updatedTask) {
 
       Task existingTask = taskRepository.findById(id)
-              .orElse(null);
-  
+      .orElse(null);
+
       if (existingTask == null) {
-          return null;
+      return null;
       }
-  
+
       existingTask.setTitle(updatedTask.getTitle());
       existingTask.setDescription(updatedTask.getDescription());
       existingTask.setStatus(updatedTask.getStatus());
       existingTask.setCreatedAt(updatedTask.getCreatedAt());
-  
-      return taskRepository.save(existingTask);
+
+      Task savedTask = taskRepository.save(existingTask);
+
+      return convertToResponseDTO(savedTask);
       }
 
       public void deleteTask(Long id) {
@@ -88,4 +91,5 @@ public class TaskService {
     
         return responseDTO;
       }
+      
 }
