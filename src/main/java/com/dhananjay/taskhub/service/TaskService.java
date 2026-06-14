@@ -6,7 +6,10 @@ import com.dhananjay.taskhub.entity.Task;
 import com.dhananjay.taskhub.exception.TaskNotFoundException;
 import com.dhananjay.taskhub.repository.TaskRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 
 
@@ -33,6 +36,14 @@ public class TaskService {
       .stream()
       .map(this::convertToResponseDTO)
       .toList();
+    }
+
+    public List<TaskResponseDTO> searchTasksByTitle(String title) {
+
+      return taskRepository.findByTitleContainingIgnoreCase(title)
+              .stream()
+              .map(this::convertToResponseDTO)
+              .toList();
     }
 
     public TaskResponseDTO getTaskById(Long id) {
@@ -96,5 +107,27 @@ public class TaskService {
     
         return task;
       }
+
+      public List<TaskResponseDTO> getTasksWithPagination(
+        int page,
+        int size) {
+
+    Pageable pageable = PageRequest.of(page, size);
+
+    Page<Task> taskPage =
+            taskRepository.findAll(pageable);
+
+    return taskPage.getContent()
+            .stream()
+            .map(this::convertToResponseDTO)
+            .toList();
+      }
       
+      public List<TaskResponseDTO> getTasksSorted(String sortBy) {
+
+        return taskRepository.findAll(Sort.by(sortBy))
+                .stream()
+                .map(this::convertToResponseDTO)
+                .toList();
+      }
 }

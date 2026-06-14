@@ -48,6 +48,35 @@ public class TaskController {
     );
     }
 
+    @GetMapping("/paginated")
+    public ApiResponse<List<TaskResponseDTO>> getTasksWithPagination(
+        @RequestParam int page,
+        @RequestParam int size) {
+
+    List<TaskResponseDTO> tasks =
+            taskService.getTasksWithPagination(page, size);
+
+    return new ApiResponse<>(
+            true,
+            "Tasks fetched successfully",
+            tasks
+    );
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<List<TaskResponseDTO>> searchTasks(
+        @RequestParam String title) {
+
+    List<TaskResponseDTO> tasks =
+            taskService.searchTasksByTitle(title);
+
+    return new ApiResponse<>(
+            true,
+            "Tasks found successfully",
+            tasks
+    );
+    }
+
     @GetMapping("/{id}")
     public TaskResponseDTO getTaskById(@PathVariable Long id){
       return taskService.getTaskById(id);
@@ -78,5 +107,19 @@ public class TaskController {
             "Task deleted successfully",
             null
     );
-}
+    }
+
+    @GetMapping("/sorted")
+    public ApiResponse<List<TaskResponseDTO>> getTasksSorted(
+        @RequestParam String sortBy) {
+
+    List<TaskResponseDTO> tasks =
+            taskService.getTasksSorted(sortBy);
+
+    return new ApiResponse<>(
+            true,
+            "Tasks sorted successfully",
+            tasks
+    );
+    }
 }
