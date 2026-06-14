@@ -3,9 +3,10 @@ package com.dhananjay.taskhub.service;
 import com.dhananjay.taskhub.dto.TaskRequestDTO;
 import com.dhananjay.taskhub.dto.TaskResponseDTO;
 import com.dhananjay.taskhub.entity.Task;
+import com.dhananjay.taskhub.exception.TaskNotFoundException;
 import com.dhananjay.taskhub.repository.TaskRepository;
 import org.springframework.stereotype.Service;
-import com.dhananjay.taskhub.dto.TaskRequestDTO;
+
 import java.util.List;
 
 
@@ -45,17 +46,17 @@ public class TaskService {
       .map(this::convertToResponseDTO)
       .toList();
     }
+
     public TaskResponseDTO getTaskById(Long id) {
 
     Task task = taskRepository.findById(id)
-            .orElse(null);
+            .orElseThrow(() ->
+                    new TaskNotFoundException(
+                            "Task with id " + id + " not found"));
 
-    if (task == null) {
-        return null;
-    }
+      return convertToResponseDTO(task);
+      }
 
-    return convertToResponseDTO(task);
-    }
       public TaskResponseDTO updateTask(Long id,
         TaskRequestDTO updatedTask) {
 
